@@ -47,7 +47,7 @@ jobs:
       - name: Clone Hugo Theme
         run: |
           rm -rf themes/hugo-theme-learn  # Remove any broken theme folder
-          git clone https://github.com/matcornic/hugo-theme-learn themes/hugo-theme-learn
+          git submodule add https://github.com/matcornic/hugo-theme-learn themes/hugo-theme-learn
 
       # 4️⃣ Build Hugo Site
       - name: Build with Hugo
