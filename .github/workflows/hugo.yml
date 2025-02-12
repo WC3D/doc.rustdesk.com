@@ -23,11 +23,15 @@ jobs:
     env:
       HUGO_VERSION: 0.128.0
     steps:
-      # 1️⃣ Clone Repository (Replaces actions/checkout)
+      # 1️⃣ Clone Repository (Fixed)
       - name: Clone Repository
         run: |
           git clone https://github.com/WC3D/doc.rustdesk.com.git .
-          git fetch --prune --unshallow
+          if [ -f .git/shallow ]; then
+              git fetch --prune --unshallow
+          else
+              git fetch --prune
+          fi
 
       # 2️⃣ Install Hugo (Replaces peaceiris/actions-hugo)
       - name: Install Hugo CLI
