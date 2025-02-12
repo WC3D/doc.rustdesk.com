@@ -44,10 +44,10 @@ jobs:
         run: sudo snap install dart-sass
 
       # 4️⃣ Clone Hugo Site
-      - name: Clone Hugo Theme
+      - name: Clone Hugo Theme (Force-Add)
         run: |
-          rm -rf themes/hugo-theme-learn  # Remove any broken theme folder
-          git submodule add https://github.com/matcornic/hugo-theme-learn themes/hugo-theme-learn
+          rm -rf themes/hugo-theme-learn
+          git submodule add -f https://github.com/matcornic/hugo-theme-learn themes/hugo-theme-learn
 
       # 4️⃣ Build Hugo Site
       - name: Build with Hugo
