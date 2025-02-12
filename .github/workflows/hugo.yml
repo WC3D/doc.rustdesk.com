@@ -1,79 +1,60 @@
-# Sample workflow for building and deploying a Hugo site to GitHub Pages
+# Deploy Hugo site to GitHub Pages using self-managed actions
 name: Deploy Hugo Site to GitHub Pages
 
 on:
-  # Runs on pushes to the main deployment branch
   push:
-    branches: ["master"]  # Change to "main" if your default branch is different
-
-  # Allows manual runs from GitHub Actions tab
+    branches: ["master"]  # Change to "main" if needed
   workflow_dispatch:
 
-# Permissions for deployment
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write  # Allows pushing built site to gh-pages branch
 
-# Allow only one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
-# Default shell
 defaults:
   run:
     shell: bash
 
 jobs:
-  # 1️⃣ Build Hugo Site
   build:
     runs-on: ubuntu-latest
     env:
       HUGO_VERSION: 0.128.0
     steps:
+      # 1️⃣ Clone Repository (Replaces actions/checkout)
+      - name: Clone Repository
+        run: |
+          git clone https://github.com/WC3D/doc.rustdesk.com.git .
+          git fetch --prune --unshallow
+
+      # 2️⃣ Install Hugo (Replaces peaceiris/actions-hugo)
       - name: Install Hugo CLI
         run: |
-          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
-          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+          wget -O /tmp/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb
+          sudo dpkg -i /tmp/hugo.deb
 
-      - name: Install Dart Sass (Required for Hugo Pipes)
+      # 3️⃣ Install Dart Sass (For Hugo Pipes)
+      - name: Install Dart Sass
         run: sudo snap install dart-sass
 
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive  # Ensures themes are cloned
-
-      - name: Setup GitHub Pages
-        id: pages
-        uses: actions/configure-pages@v5
-
-      - name: Install Node.js Dependencies (if needed)
-        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
-
-      - name: Build Hugo Site
+      # 4️⃣ Build Hugo Site
+      - name: Build with Hugo
         env:
           HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
           HUGO_ENVIRONMENT: production
         run: |
-          hugo \
-            --minify \
-            --baseURL "${{ steps.pages.outputs.base_url }}/"
+          hugo --minify --baseURL "https://wc3d.github.io/doc.rustdesk.com/"
 
-      - name: Upload Artifact for Deployment
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./public  # Hugo outputs static files to ./public
-
-  # 2️⃣ Deploy to GitHub Pages
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      # 5️⃣ Deploy to GitHub Pages (Replaces actions/upload-pages-artifact + deploy-pages)
+      - name: Deploy to gh-pages Branch
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git checkout --orphan gh-pages
+          git rm -rf .
+          cp -r public/* .
+          git add .
+          git commit -m "Deploy Hugo site"
+          git push --force origin gh-pages
