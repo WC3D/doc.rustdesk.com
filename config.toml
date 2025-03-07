@@ -34,79 +34,32 @@ home = [ "HTML", "RSS", "JSON"]
 
 [Languages]
 [Languages.en]
+[languages.en.params]
 title = "Documentation for RustDesk"
 weight = 1
 languageName = "English"
 landingPageName = "<i class='fas fa-home'></i> Home"
 
 [Languages.es]
+[languages.es.params]
 title = "Documentación para RustDesk"
 weight = 1
 languageName = "Español"
 landingPageName = "<i class='fas fa-home'></i> Principal"
 
-[Languages.fr]
-title = "Documentation du RustDesk"
-weight = 2
-languageName = "Français"
-landingPageName = "<i class='fas fa-home'></i> Page d'accueil"
-
-[Languages.ru]
-title = "Документация для RustDesk"
-weight = 2
-languageName = "Русский"
-landingPageName = "<i class='fas fa-home'></i> Домашняя страница"
-
-[Languages.pt]
-title = "Documentação para RustDesk"
-weight = 2
-languageName = "Português"
-landingPageName = "<i class='fas fa-home'></i> Pagina inicial"
-
-[Languages.it]
-title = "Documentazione per RustDesk"
-weight = 2
-languageName = "Italiano"
-landingPageName = "<i class='fas fa-home'></i> Pagina iniziale"
-
-[Languages.de]
-title = "Dokumentation für RustDesk"
-weight = 2
-languageName = "Deutsch"
-landingPageName = "<i class='fas fa-home'></i> Startseite"
-
-[Languages.nl]
-title = "Documentatie voor RustDesk"
-weight = 2
-languageName = "Nederlands"
-landingPageName = "<i class='fas fa-home'></i> Startpagina"
-
-[Languages.tr]
-title = "RustDesk için Belgeler"
-weight = 2
-languageName = "Türkçe"
-landingPageName = "<i class='fas fa-home'></i> Ana sayfa"
-
 [Languages.ja]
+[languages.ja.params]
 title = "RustDeskのドキュメント"
 weight = 2
 languageName = "日本語"
 landingPageName = "<i class='fas fa-home'></i> ホームページ"
 
 [Languages.zh-cn]
+[languages.zh-cn.params]
 title = "RustDesk文档"
 weight = 3
 languageName = "简体中文"
 landingPageName = "<i class='fas fa-home'></i> 首页"
-
-[Languages.zh-cn.params]
-disable_cookie = true
-
-[Languages.zh-tw]
-title = "RustDesk文檔"
-weight = 3
-languageName = "繁體中文"
-landingPageName = "<i class='fas fa-home'></i> 首頁"
 
 [[menu.shortcuts]]
 name = "<i class='fab fa-fw fa-github'></i> GitHub"
