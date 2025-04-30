@@ -1,0 +1,70 @@
+# Deploy Hugo site to GitHub Pages using self-managed actions
+name: Deploy Hugo Site to GitHub Pages
+
+on:
+  push:
+    branches: ["master"]  # Change to "main" if needed
+  workflow_dispatch:
+
+permissions:
+  contents: write  # Allows pushing built site to gh-pages branch
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HUGO_VERSION: 0.128.0
+    steps:
+      # 1️⃣ Clone Repository (Fixed)
+      - name: Clone Repository
+        run: |
+          git clone https://github.com/WC3D/doc.rustdesk.com.git .
+          if [ -f .git/shallow ]; then
+              git fetch --prune --unshallow
+          else
+              git fetch --prune
+          fi
+
+      # 2️⃣ Install Hugo (Replaces peaceiris/actions-hugo)
+      - name: Install Hugo CLI
+        run: |
+          wget -O /tmp/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb
+          sudo dpkg -i /tmp/hugo.deb
+
+      # 3️⃣ Install Dart Sass (For Hugo Pipes)
+      - name: Install Dart Sass
+        run: sudo snap install dart-sass
+
+      # 4️⃣ Clone Hugo Site
+      - name: Clone Hugo Theme (Force-Add)
+        run: |
+          rm -rf themes/hugo-theme-learn
+          git submodule add -f https://github.com/matcornic/hugo-theme-learn themes/hugo-theme-learn
+
+      # 4️⃣ Build Hugo Site
+      - name: Build with Hugo
+        env:
+          HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
+          HUGO_ENVIRONMENT: production
+        run: |
+          hugo --minify --baseURL "https://wc3d.github.io/doc.rustdesk.com/"
+
+      # 5️⃣ Deploy to GitHub Pages (Replaces actions/upload-pages-artifact + deploy-pages)
+      - name: Deploy to gh-pages Branch
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git checkout --orphan gh-pages
+          git rm -rf .
+          cp -r public/* .
+          git add .
+          git commit -m "Deploy Hugo site"
+          git push --force origin gh-pages
